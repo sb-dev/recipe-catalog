@@ -1,0 +1,9 @@
+version: '1'
+services:
+    recipe-catalog-database:
+        container_name: recipe-catalog-database
+        build: ./recipe-catalog-database
+        ports:
+            - "27017:27017"
+        volumes:
+            - /tmp:/data
