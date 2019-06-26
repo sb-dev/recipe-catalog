@@ -1,4 +1,4 @@
-# Recipe Book
+# Recipe Catalog
 
 ## About
 
