@@ -1,7 +1,7 @@
 package com.recipeCatalog
 
 import akka.actor.ActorSystem
-import akka.event.{LogSource, Logging}
+import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.recipeCatalog.common.repository.Mongo
