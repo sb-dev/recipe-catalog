@@ -22,6 +22,7 @@ trait Module {
   implicit val executionContext: ExecutionContextExecutor = system.dispatcher
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
+  val config: Config = ConfigFactory.load()
   val codecRegistry: CodecRegistry = fromRegistries(
     fromProviders(recipeCodecProvider, authorCodecProvider),
     DEFAULT_CODEC_REGISTRY
@@ -35,7 +36,6 @@ trait Module {
     )
   }
 
-  val config: Config = ConfigFactory.load()
   lazy val mongo: Mongo = wireWith(MongoFactory.create _)
 
   lazy val recipeRepository = wire[RecipeRepository]
