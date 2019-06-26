@@ -2,9 +2,7 @@ package com.recipeCatalog.routes
 
 import akka.http.scaladsl.server.Directives._
 import akka.stream.Materializer
-import com.recipeCatalog.common.repository.Mongo
 import com.recipeCatalog.service.RecipeService
-import io.circe.generic.auto._
 import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport._
 
 import scala.concurrent.ExecutionContext
@@ -25,8 +23,7 @@ import scala.concurrent.ExecutionContext
   * POST   /api/v1/authors/{id}/recipes
   */
 
-class RecipeRoute(repository: Mongo)(implicit ec: ExecutionContext, mat: Materializer) {
- val recipeService: RecipeService = new RecipeService(repository)
+class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, mat: Materializer) {
  val recipeRoutes =
    pathPrefix("api" / "recipes") {
      get {

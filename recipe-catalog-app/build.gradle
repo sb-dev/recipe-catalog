@@ -1,7 +1,7 @@
 apply plugin: 'scala'
 
 ext.versions = [
-        scala            : '2.11',
+        scala            : '2.12',
         scala_full       : '2.11.0',
         akka             : '2.5.23',
         akka_http        : '10.1.8',
@@ -18,6 +18,7 @@ dependencies {
             "de.heikoseeberger:akka-http-circe_$versions.scala:1.25.2",
             "io.circe:circe-generic_$versions.scala:$versions.circe",
             "org.mongodb.scala:mongo-scala-driver_$versions.scala:$versions.mongoDb",
+            "com.softwaremill.macwire:macros_$versions.scala:2.2.5",
             "joda-time:joda-time:$versions.jodaTime"
 
     testCompile "junit:junit:4.12",
