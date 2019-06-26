@@ -30,6 +30,12 @@ class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, m
        complete {
          recipeService.findAll()
        }
+     } ~ pathPrefix(Segment) { (recipeId: String) =>
+       get {
+         complete {
+           recipeService.findOne(recipeId)
+         }
+       }
      }
    }
 }

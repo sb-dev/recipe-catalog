@@ -26,7 +26,7 @@ abstract class MongoRepository[A, IdType](implicit ec: ExecutionContext, ct: Cla
     collection.find().collect[A]().head()
   }
 
-  def query(id: IdType): Future[Option[A]] = {
+  def query(id: String): Future[Option[A]] = {
     collection.find(equal("_id", id)).first().head().map(Option(_))
   }
 

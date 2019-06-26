@@ -9,4 +9,8 @@ class RecipeService(recipeRepository: RecipeRepository)(implicit ec: ExecutionCo
   def findAll(): Future[Seq[Recipe]] = {
     recipeRepository.queryAll()
   }
+
+  def findOne(id: String): Future[Option[Recipe]] = {
+    recipeRepository.query(id)
+  }
 }
