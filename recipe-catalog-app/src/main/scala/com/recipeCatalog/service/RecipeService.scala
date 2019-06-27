@@ -13,4 +13,8 @@ class RecipeService(recipeRepository: RecipeRepository)(implicit ec: ExecutionCo
   def findOne(id: String): Future[Option[Recipe]] = {
     recipeRepository.query(id)
   }
+
+  def save(recipe: Recipe): Unit = {
+    recipeRepository.insert(recipe)
+  }
 }

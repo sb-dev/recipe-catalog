@@ -2,6 +2,8 @@ package com.recipeCatalog.routes
 
 import akka.http.scaladsl.server.Directives._
 import akka.stream.Materializer
+import com.recipeCatalog.common.model.FindByIdRequest
+import com.recipeCatalog.model.Recipe
 import com.recipeCatalog.service.RecipeService
 import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport._
 
@@ -30,11 +32,13 @@ class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, m
        complete {
          recipeService.findAll()
        }
-     } ~ pathPrefix(Segment) { (recipeId: String) =>
-       get {
-         complete {
-           recipeService.findOne(recipeId)
-         }
+     } ~ (get & path(Segment).as(FindByIdRequest)) { request =>
+       complete {
+         recipeService.findOne(request.id)
+       }
+     } ~ (post & pathEndOrSingleSlash & entity(as[Recipe])) { recipe =>
+       complete {
+         recipeService.save(recipe)
        }
      }
    }
