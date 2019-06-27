@@ -1,5 +1,6 @@
 package com.recipeCatalog.common.repository
 
+import com.recipeCatalog.common.model.Entity
 import org.bson.codecs.configuration.CodecRegistry
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.{InsertOneModel, WriteModel}
@@ -17,7 +18,7 @@ object Mongo {
     new Mongo(databaseName, url, codecRegistry)
 }
 
-abstract class MongoRepository[A, IdType](implicit ec: ExecutionContext, ct: ClassTag[A]) {
+abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContext, ct: ClassTag[A]) {
   def mongo: Mongo
   def collectionName: String
   def collection: MongoCollection[A] = mongo.mongoDatabase.getCollection(collectionName)
@@ -30,8 +31,11 @@ abstract class MongoRepository[A, IdType](implicit ec: ExecutionContext, ct: Cla
     collection.find(equal("_id", id)).first().head().map(Option(_))
   }
 
-  def insert(a: A) {
-    collection.insertOne(a)
+  def insert(a: A): Future[String] = {
+    collection
+      .insertOne(a)
+      .head()
+      .map{ _ => a._id.toHexString}
   }
 
   def insert(a: List[A]) {
