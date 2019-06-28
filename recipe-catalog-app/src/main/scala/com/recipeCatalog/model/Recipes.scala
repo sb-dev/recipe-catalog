@@ -40,7 +40,8 @@ case class Author(override val _id: ObjectId, name: String) extends Entity(_id)
 object Author {
   implicit val encoder: Encoder[Author] = new Encoder[Author] {
     override def apply(a: Author): Json = Json.obj(
-      "id" -> Json.fromString(a._id.toHexString)
+      "id" -> Json.fromString(a._id.toHexString),
+      "name" -> Json.fromString(a.name)
     )
   }
 

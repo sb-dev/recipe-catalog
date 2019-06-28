@@ -1,5 +1,6 @@
 package com.recipeCatalog.service
 
+import com.mongodb.client.result.DeleteResult
 import com.recipeCatalog.model.Recipe
 import com.recipeCatalog.repository.RecipeRepository
 
@@ -20,5 +21,9 @@ class RecipeService(recipeRepository: RecipeRepository)(implicit ec: ExecutionCo
 
   def save(recipe: Recipe): Future[String]  = {
     recipeRepository.insert(recipe)
+  }
+
+  def delete(id: String): Future[DeleteResult] = {
+    recipeRepository.delete(id)
   }
 }

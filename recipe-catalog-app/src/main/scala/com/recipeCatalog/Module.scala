@@ -5,9 +5,9 @@ import akka.stream.ActorMaterializer
 import com.recipeCatalog.common.repository.Mongo
 import com.recipeCatalog.model.Author.authorCodecProvider
 import com.recipeCatalog.model.Recipe.recipeCodecProvider
-import com.recipeCatalog.repository.RecipeRepository
-import com.recipeCatalog.routes.RecipeRoute
-import com.recipeCatalog.service.RecipeService
+import com.recipeCatalog.repository.{AuthorRepository, RecipeRepository}
+import com.recipeCatalog.routes.{AuthorRoute, RecipeRoute}
+import com.recipeCatalog.service.{AuthorService, RecipeService}
 import com.typesafe.config.{Config, ConfigFactory}
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.bson.codecs.configuration.CodecRegistry
@@ -41,6 +41,10 @@ trait Module {
   lazy val recipeRepository = wire[RecipeRepository]
   lazy val recipeService= wire[RecipeService]
   lazy val recipeRoutes = wire[RecipeRoute]
+
+  lazy val authorRepository = wire[AuthorRepository]
+  lazy val authorService= wire[AuthorService]
+  lazy val authorRoutes = wire[AuthorRoute]
 }
 
 object Module extends Module

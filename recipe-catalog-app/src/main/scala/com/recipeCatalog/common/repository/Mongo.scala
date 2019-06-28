@@ -1,5 +1,6 @@
 package com.recipeCatalog.common.repository
 
+import com.mongodb.client.result.DeleteResult
 import com.recipeCatalog.common.model.Entity
 import org.bson.codecs.configuration.CodecRegistry
 import org.mongodb.scala.bson.BsonObjectId
@@ -33,6 +34,12 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
     collection.find(equal("_id", BsonObjectId(id))).first().head().map(Option(_))
   }
 
+  def query(filter: Bson): Future[Seq[A]] = {
+    collection.find(filter)
+      .collect[A]()
+      .head()
+  }
+
   def insert(a: A): Future[String] = {
     collection
       .insertOne(a)
@@ -51,5 +58,10 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
       InsertOneModel(item)
     })
     collection.bulkWrite(writes)
+  }
+
+  def delete(id: String): Future[DeleteResult] = {
+    collection.deleteOne(equal("_id", BsonObjectId(id)))
+      .head()
   }
 }
