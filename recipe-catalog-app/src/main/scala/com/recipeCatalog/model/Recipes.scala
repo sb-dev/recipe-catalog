@@ -26,10 +26,10 @@ object Recipe {
 
   implicit val decoder: Decoder[Recipe] = new Decoder[Recipe] {
     override def apply(c: HCursor): Result[Recipe] = for {
-      title <- c.get[String]("title")
-      publishDate <- c.get[String]("publishDate")
-      authorId <- c.get[String]("authorId")
-    } yield Recipe(ObjectId.get(), title, authorId, LocalDate.parse(publishDate, formatter))
+      title <- c.downField("title").as[Option[String]]
+      publishDate <- c.downField("publishDate").as[Option[String]]
+      authorId <- c.downField("authorId").as[Option[String]]
+    } yield Recipe(ObjectId.get(), title.getOrElse(""), authorId.getOrElse(""), LocalDate.parse(publishDate.get, formatter))
   }
 
   val recipeCodecProvider: CodecProvider = Macros.createCodecProviderIgnoreNone[Recipe]()
