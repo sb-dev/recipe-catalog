@@ -14,6 +14,10 @@ class RecipeService(recipeRepository: RecipeRepository)(implicit ec: ExecutionCo
     recipeRepository.query(id)
   }
 
+  def update(id: String, recipe: Recipe): Future[Recipe] = {
+    recipeRepository.update(id, recipe)
+  }
+
   def save(recipe: Recipe): Future[String]  = {
     recipeRepository.insert(recipe)
   }

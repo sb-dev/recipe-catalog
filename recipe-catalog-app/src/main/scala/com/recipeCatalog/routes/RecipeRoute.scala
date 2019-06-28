@@ -3,7 +3,7 @@ package com.recipeCatalog.routes
 import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model.headers.Location
 import akka.http.scaladsl.model.{HttpResponse, ResponseEntity, StatusCodes}
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Directives.{path, _}
 import akka.stream.Materializer
 import com.recipeCatalog.common.model.{FindByIdRequest, Message}
 import com.recipeCatalog.model.Recipe
@@ -32,7 +32,7 @@ import scala.util.{Failure, Success}
 class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, mat: Materializer) {
  val recipeRoutes =
    pathPrefix("api" / "recipes") {
-     get {
+     (get & pathEndOrSingleSlash) {
        onComplete(recipeService.findAll()) {
          case Success(recipes) =>
           complete(Marshal(recipes).to[ResponseEntity].map{e => HttpResponse(entity = e)})
@@ -52,6 +52,13 @@ class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, m
        onComplete(recipeService.save(recipe)) {
          case Success(id) =>
            complete(HttpResponse(status = StatusCodes.Created, headers = List(Location(s"api/recipe/$id"))))
+         case Failure(e) =>
+           complete(Marshal(Message(e.getMessage)).to[ResponseEntity].map{e => HttpResponse(entity = e)})
+       }
+     } ~ (put & path(Segment).as(FindByIdRequest) & entity(as[Recipe])) { (request, recipe) =>
+       onComplete(recipeService.update(request.id, recipe)) {
+         case Success(recipe) =>
+           complete(HttpResponse(status = StatusCodes.Created, headers = List(Location(s"api/recipe/$recipe._id"))))
          case Failure(e) =>
            complete(Marshal(Message(e.getMessage)).to[ResponseEntity].map{e => HttpResponse(entity = e)})
        }

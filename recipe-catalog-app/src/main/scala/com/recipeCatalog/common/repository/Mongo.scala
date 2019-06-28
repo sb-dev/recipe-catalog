@@ -2,6 +2,8 @@ package com.recipeCatalog.common.repository
 
 import com.recipeCatalog.common.model.Entity
 import org.bson.codecs.configuration.CodecRegistry
+import org.mongodb.scala.bson.BsonObjectId
+import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.{InsertOneModel, WriteModel}
 import org.mongodb.scala.{MongoClient, MongoCollection, MongoDatabase}
@@ -28,7 +30,7 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
   }
 
   def query(id: String): Future[Option[A]] = {
-    collection.find(equal("_id", id)).first().head().map(Option(_))
+    collection.find(equal("_id", BsonObjectId(id))).first().head().map(Option(_))
   }
 
   def insert(a: A): Future[String] = {
@@ -36,6 +38,12 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
       .insertOne(a)
       .head()
       .map{ _ => a._id.toHexString}
+  }
+
+  def update(id: String, updates: Bson): Future[A] = {
+    collection
+      .findOneAndUpdate(equal("_id", BsonObjectId(id)), updates)
+      .head()
   }
 
   def insert(a: List[A]) {
