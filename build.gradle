@@ -9,3 +9,13 @@
 plugins {
     id 'scala'
 }
+
+project.task('start') {
+    dependsOn(":recipe-catalog:clean")
+
+    doLast {
+        project.exec {
+            commandLine 'bash', '-c', "docker-compose up --build"
+        }
+    }
+}
