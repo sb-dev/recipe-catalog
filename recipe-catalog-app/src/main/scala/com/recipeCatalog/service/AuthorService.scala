@@ -32,6 +32,6 @@ class AuthorService(authorRepository: AuthorRepository, recipeRepository: Recipe
   }
 
   def delete(id: String): Future[DeleteResult] = {
-    recipeRepository.delete(id)
+    authorRepository.delete(id)
   }
 }
