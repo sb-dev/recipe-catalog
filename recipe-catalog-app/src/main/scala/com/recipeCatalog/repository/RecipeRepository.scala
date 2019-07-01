@@ -15,7 +15,7 @@ class RecipeRepository(val mongo: Mongo)(implicit ec: ExecutionContext) extends 
     super.query(equal("authorId", authorId))
   }
 
-  def update(id:String, recipe: Recipe): Future[Recipe] = {
+  def update(id:String, recipe: Recipe): Future[Option[Recipe]] = {
     val toUpdate: Bson = Updates.combine(
       Updates.set("title", recipe.title)
     )

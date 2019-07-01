@@ -31,7 +31,10 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
   }
 
   def query(id: String): Future[Option[A]] = {
-    collection.find(equal("_id", BsonObjectId(id))).first().head().map(Option(_))
+    collection.find(equal("_id", BsonObjectId(id)))
+      .first()
+      .head()
+      .map(Option(_))
   }
 
   def query(filter: Bson): Future[Seq[A]] = {
@@ -47,10 +50,11 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
       .map{ _ => a._id.toHexString}
   }
 
-  def update(id: String, updates: Bson): Future[A] = {
+  def update(id: String, updates: Bson): Future[Option[A]] = {
     collection
       .findOneAndUpdate(equal("_id", BsonObjectId(id)), updates)
       .head()
+      .map(Option(_))
   }
 
   def insert(a: List[A]) {

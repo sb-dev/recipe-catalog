@@ -44,8 +44,10 @@ class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, m
 
  private lazy val update: Route = (put & path(Segment).as(FindByIdRequest) & entity(as[Recipe])) { (request, recipe) =>
    onComplete(recipeService.update(request.id, recipe)) {
-     case Success(recipe) =>
+     case Success(Some(recipe)) =>
        complete(handleCreated("recipe", recipe._id.toHexString))
+     case Success(None) =>
+       complete(handleNotFound)
      case Failure(e) =>
        complete(handleFailure(e.getMessage))
    }

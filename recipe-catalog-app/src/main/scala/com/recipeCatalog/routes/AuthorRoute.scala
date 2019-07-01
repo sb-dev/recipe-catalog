@@ -53,8 +53,10 @@ class AuthorRoute(authorService: AuthorService)(implicit ec: ExecutionContext, m
           }
         } ~ (put & entity(as[Author])) { author =>
           onComplete(authorService.update(request.id, author)) {
-            case Success(author) =>
+            case Success(Some(author)) =>
               complete(handleCreated("author", author._id.toHexString))
+            case Success(None) =>
+              complete(handleNotFound)
             case Failure(e) =>
               complete(handleFailure(e.getMessage))
           }

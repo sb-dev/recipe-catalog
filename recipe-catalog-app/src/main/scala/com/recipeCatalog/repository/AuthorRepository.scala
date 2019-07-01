@@ -10,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthorRepository(val mongo: Mongo)(implicit ec: ExecutionContext) extends MongoRepository[Author, Long] {
   override val collectionName: String = "author"
 
-  def update(id:String, author: Author): Future[Author] = {
+  def update(id:String, author: Author): Future[Option[Author]] = {
     val toUpdate: Bson = Updates.combine(
       Updates.set("name", author.name)
     )

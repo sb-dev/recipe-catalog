@@ -19,7 +19,7 @@ class AuthorService(authorRepository: AuthorRepository, recipeRepository: Recipe
     recipeRepository.findByAuthor(authorId)
   }
 
-  def update(id: String, author: Author): Future[Author] = {
+  def update(id: String, author: Author): Future[Option[Author]] = {
     authorRepository.update(id, author)
   }
 
