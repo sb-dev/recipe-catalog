@@ -11,7 +11,7 @@ object Application extends App {
   import Module._
   val log = Logging.getLogger(system, this)
 
-  val routes: Route = recipeRoutes.recipeRoutes ~ authorRoutes.authorRoutes
+  val routes: Route = recipeRoutes.routes ~ authorRoutes.authorRoutes
   val host: String = "0.0.0.0"
   val appPort: Int = Try(config.getInt("app.port")).getOrElse(8080)
 
