@@ -1,7 +1,8 @@
 package com.recipeCatalog.routes
 
 import akka.http.scaladsl.marshalling.Marshal
-import akka.http.scaladsl.model.{MessageEntity, StatusCodes}
+import akka.http.scaladsl.model.headers.Location
+import akka.http.scaladsl.model.{HttpHeader, MessageEntity, StatusCodes}
 import com.recipeCatalog.helpers.RouteSpec
 import com.recipeCatalog.model.Author
 import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport._
@@ -16,7 +17,7 @@ class AuthorRouteSpec extends RouteSpec with BeforeAndAfterAll with BeforeAndAft
   val collection: MongoCollection[Author] = mongo.mongoDatabase.getCollection("author")
   val testAuthors = List(
     Author(
-      idGenerator.generate,
+      "test Id",
       "Test Author 1"
     )
   )
@@ -41,7 +42,8 @@ class AuthorRouteSpec extends RouteSpec with BeforeAndAfterAll with BeforeAndAft
 
     "successfully create authors" in {
       Post("/api/authors").withEntity(authorEntity) ~> module.authorRoutes.routes ~> check {
-        status shouldEqual StatusCodes.OK
+        status shouldEqual StatusCodes.Created
+        header("Location") shouldEqual Some(Location(s"api/author/${idGenerator.generate}"))
       }
     }
   }
