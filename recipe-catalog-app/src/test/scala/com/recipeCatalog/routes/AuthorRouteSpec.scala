@@ -5,7 +5,6 @@ import akka.http.scaladsl.model.{MessageEntity, StatusCodes}
 import com.recipeCatalog.helpers.RouteSpec
 import com.recipeCatalog.model.Author
 import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport._
-import org.bson.types.ObjectId
 import org.mongodb.scala.MongoCollection
 import org.mongodb.scala.model.{InsertOneModel, WriteModel}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -13,10 +12,11 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
 class AuthorRouteSpec extends RouteSpec with BeforeAndAfterAll with BeforeAndAfterEach with ScalaFutures with IntegrationPatience {
   val mongo = module.mongo
+  val idGenerator = module.idGenerator
   val collection: MongoCollection[Author] = mongo.mongoDatabase.getCollection("author")
   val testAuthors = List(
     Author(
-       new ObjectId(),
+      idGenerator.generate,
       "Test Author 1"
     )
   )

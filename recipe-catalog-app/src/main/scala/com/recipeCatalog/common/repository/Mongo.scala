@@ -23,6 +23,7 @@ object Mongo {
 
 abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContext, ct: ClassTag[A]) {
   def mongo: Mongo
+  def idGenerator: IdGenerator
   def collectionName: String
   def collection: MongoCollection[A] = mongo.mongoDatabase.getCollection(collectionName)
 
@@ -47,7 +48,7 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
     collection
       .insertOne(a)
       .head()
-      .map{ _ => a._id.toHexString}
+      .map{ _ => a._id}
   }
 
   def update(id: String, updates: Bson): Future[Option[A]] = {
