@@ -19,7 +19,14 @@ dependencies {
             "io.circe:circe-generic_$versions.scala:$versions.circe",
             "org.mongodb.scala:mongo-scala-driver_$versions.scala:$versions.mongoDb",
             "com.softwaremill.macwire:macros_$versions.scala:2.2.5",
-            "joda-time:joda-time:$versions.jodaTime"
+            "joda-time:joda-time:$versions.jodaTime",
+            "com.github.swagger-akka-http:swagger-akka-http_$versions.scala:2.0.0",
+            "com.github.swagger-akka-http:swagger-scala-module_$versions.scala:2.0.4",
+            "com.fasterxml.jackson.module:jackson-module-scala_$versions.scala:2.9.9",
+            "io.swagger.core.v3:swagger-core_$versions.scala:2.0.8",
+            "io.swagger.core.v3:swagger-annotations$versions.scala_2.0.8",
+            "io.swagger.core.v3:swagger-models_$versions.scala:2.0.8",
+            "io.swagger.core.v3:swagger-jaxrs2_$versions.scala:2.0.8"
 
     testCompile "junit:junit:4.12",
                 "org.scalatest:scalatest_$versions.scala:3.0.5",
