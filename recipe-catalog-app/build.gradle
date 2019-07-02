@@ -23,12 +23,21 @@ dependencies {
 
     testCompile "junit:junit:4.12",
                 "org.scalatest:scalatest_$versions.scala:3.0.5",
-                "com.typesafe.akka:akka-stream-testkit_$versions.scala:2.5.19",
-                "com.typesafe.akka:akka-http-testkit_$versions.scala:10.1.8",
+                "com.typesafe.akka:akka-stream-testkit_$versions.scala:$versions.akka",
+                "com.typesafe.akka:akka-http-testkit_$versions.scala:$versions.akka_http",
                 "org.mockito:mockito-scala_$versions.scala:1.4.0",
-                "com.github.simplyscala:scalatest-embedmongo_2.12:0.2.4"
+                "com.github.simplyscala:scalatest-embedmongo_2.12:0.2.4",
+                "org.pegdown:pegdown:1.6.0"
 }
 
 repositories {
     jcenter()
 }
+
+task spec(dependsOn: ['testClasses'], type: JavaExec) {
+    main = 'org.scalatest.tools.Runner'
+    args = ['-R', 'build/classes/scala/test', '-h', "build/junit-reports/html", '-u', 'build/junit-reports/xml', '-o']
+    classpath = sourceSets.test.runtimeClasspath
+}
+
+test.dependsOn spec
