@@ -20,7 +20,9 @@ dependencies {
             "org.mongodb.scala:mongo-scala-driver_$versions.scala:$versions.mongoDb",
             "com.softwaremill.macwire:macros_$versions.scala:2.2.5",
             "joda-time:joda-time:$versions.jodaTime",
-            "com.github.swagger-akka-http:swagger-akka-http_$versions.scala:2.0.0"
+            "javax.ws.rs:javax.ws.rs-api:2.1.1",
+            "com.github.swagger-akka-http:swagger-akka-http_$versions.scala:1.1.0",
+            "io.swagger:swagger-annotations:1.5.22"
 
     testCompile "junit:junit:4.12",
                 "org.scalatest:scalatest_$versions.scala:3.0.5",
