@@ -58,7 +58,7 @@ class AuthorRoute(authorService: AuthorService)(implicit ec: ExecutionContext, m
   private lazy val update: Route = (put & pathPrefix(Segment).as(FindByIdRequest) & entity(as[Author])) { (request, author) =>
     onComplete(authorService.update(request.id, author)) {
       case Success(Some(author)) =>
-        complete(handleCreated("author", author._id.toHexString))
+        complete(handleCreated("author", author._id))
       case Success(None) =>
         complete(handleNotFound)
       case Failure(e) =>

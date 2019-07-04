@@ -2,7 +2,7 @@ package com.recipeCatalog
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import com.recipeCatalog.common.repository.Mongo
+import com.recipeCatalog.common.repository.{IdGenerator, Mongo}
 import com.recipeCatalog.model.Author.authorCodecProvider
 import com.recipeCatalog.model.Recipe.recipeCodecProvider
 import com.recipeCatalog.repository.{AuthorRepository, RecipeRepository}
@@ -37,6 +37,7 @@ trait Module {
   }
 
   lazy val mongo: Mongo = wireWith(MongoFactory.create _)
+  lazy val idGenerator: IdGenerator = IdGenerator
 
   lazy val recipeRepository = wire[RecipeRepository]
   lazy val recipeService= wire[RecipeService]

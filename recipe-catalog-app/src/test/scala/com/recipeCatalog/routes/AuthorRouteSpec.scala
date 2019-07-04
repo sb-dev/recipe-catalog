@@ -1,11 +1,11 @@
 package com.recipeCatalog.routes
 
 import akka.http.scaladsl.marshalling.Marshal
-import akka.http.scaladsl.model.{MessageEntity, StatusCodes}
+import akka.http.scaladsl.model.headers.Location
+import akka.http.scaladsl.model.{HttpHeader, MessageEntity, StatusCodes}
 import com.recipeCatalog.helpers.RouteSpec
 import com.recipeCatalog.model.Author
 import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport._
-import org.bson.types.ObjectId
 import org.mongodb.scala.MongoCollection
 import org.mongodb.scala.model.{InsertOneModel, WriteModel}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -13,10 +13,11 @@ import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
 class AuthorRouteSpec extends RouteSpec with BeforeAndAfterAll with BeforeAndAfterEach with ScalaFutures with IntegrationPatience {
   val mongo = module.mongo
+  val idGenerator = module.idGenerator
   val collection: MongoCollection[Author] = mongo.mongoDatabase.getCollection("author")
   val testAuthors = List(
     Author(
-       new ObjectId(),
+      "test Id",
       "Test Author 1"
     )
   )
@@ -41,7 +42,8 @@ class AuthorRouteSpec extends RouteSpec with BeforeAndAfterAll with BeforeAndAft
 
     "successfully create authors" in {
       Post("/api/authors").withEntity(authorEntity) ~> module.authorRoutes.routes ~> check {
-        status shouldEqual StatusCodes.OK
+        status shouldEqual StatusCodes.Created
+        header("Location") shouldEqual Some(Location(s"api/author/${idGenerator.generate}"))
       }
     }
   }
