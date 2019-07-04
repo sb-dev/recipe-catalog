@@ -3,7 +3,6 @@ package com.recipeCatalog.common.repository
 import com.mongodb.client.result.DeleteResult
 import com.recipeCatalog.common.model.Entity
 import org.bson.codecs.configuration.CodecRegistry
-import org.mongodb.scala.bson.BsonObjectId
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.{InsertOneModel, WriteModel}
@@ -32,7 +31,7 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
   }
 
   def query(id: String): Future[Option[A]] = {
-    collection.find(equal("_id", BsonObjectId(id)))
+    collection.find(equal("_id", id))
       .first()
       .head()
       .map(Option(_))
@@ -53,7 +52,7 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
 
   def update(id: String, updates: Bson): Future[Option[A]] = {
     collection
-      .findOneAndUpdate(equal("_id", BsonObjectId(id)), updates)
+      .findOneAndUpdate(equal("_id", id), updates)
       .head()
       .map(Option(_))
   }
@@ -66,7 +65,7 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
   }
 
   def delete(id: String): Future[DeleteResult] = {
-    collection.deleteOne(equal("_id", BsonObjectId(id)))
+    collection.deleteOne(equal("_id", id))
       .head()
   }
 }

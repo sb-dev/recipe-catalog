@@ -15,14 +15,19 @@ class AuthorRouteSpec extends RouteSpec with BeforeAndAfterAll with BeforeAndAft
   val mongo = module.mongo
   val idGenerator = module.idGenerator
   val collection: MongoCollection[Author] = mongo.mongoDatabase.getCollection("author")
+
   val testAuthors = List(
     Author(
-      "test Id",
+      "5d16314256ffa4012e827b45",
       "Test Author 1"
     )
   )
 
-  val authorEntity = Marshal(testAuthors(0)).to[MessageEntity].futureValue
+  val testPostAuthor = Author(
+    "",
+    "Test Author 1"
+  )
+  val authorEntity = Marshal(testPostAuthor).to[MessageEntity].futureValue
 
   override def beforeAll(): Unit = {
     val writes: List[WriteModel[Author]] = testAuthors.map(item => {
@@ -44,6 +49,12 @@ class AuthorRouteSpec extends RouteSpec with BeforeAndAfterAll with BeforeAndAft
       Post("/api/authors").withEntity(authorEntity) ~> module.authorRoutes.routes ~> check {
         status shouldEqual StatusCodes.Created
         header("Location") shouldEqual Some(Location(s"api/author/${idGenerator.generate}"))
+      }
+    }
+
+    "successfully get authors by Id" in {
+      Get("/api/authors/5d16314256ffa4012e827b45") ~> module.authorRoutes.routes ~> check {
+        status shouldEqual StatusCodes.OK
       }
     }
   }
