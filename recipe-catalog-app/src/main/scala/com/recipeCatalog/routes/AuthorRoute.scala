@@ -78,7 +78,7 @@ class AuthorRoute(authorService: AuthorService)(implicit ec: ExecutionContext, m
   )
   @ApiImplicitParams(
     Array(
-      new ApiImplicitParam(value = "author ID", required = true, dataType = "String", paramType = "path")
+      new ApiImplicitParam(name="authorId", value = "author ID", required = true, dataType = "String", paramType = "path")
     )
   )
   def findById: Route = (get & pathPrefix(Segment).as(FindByIdRequest) & pathEndOrSingleSlash) { request =>
