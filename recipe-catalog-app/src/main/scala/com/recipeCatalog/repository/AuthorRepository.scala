@@ -7,7 +7,7 @@ import org.mongodb.scala.model.Updates
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorRepository(val mongo: Mongo, val idGenerator: IdGenerator)(implicit ec: ExecutionContext) extends MongoRepository[Author, Long] {
+class AuthorRepository(val mongo: Mongo, val idGenerator: IdGenerator)(implicit ec: ExecutionContext) extends MongoRepository[Author, String] {
   override val collectionName: String = "author"
 
   override def insert(author: Author): Future[String] = {
