@@ -46,6 +46,7 @@ trait Module {
   lazy val authorRepository = wire[AuthorRepository]
   lazy val authorService= wire[AuthorService]
   lazy val authorRoutes = wire[AuthorRoute]
+
 }
 
 object Module extends Module
