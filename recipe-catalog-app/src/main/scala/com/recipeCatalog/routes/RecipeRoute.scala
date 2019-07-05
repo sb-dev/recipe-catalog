@@ -22,8 +22,8 @@ import scala.util.{Failure, Success}
   */
 
 class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, mat: Materializer) {
- private lazy val findAll: Route = (get & pathEndOrSingleSlash) {
-   onComplete(recipeService.findAll()) {
+ private lazy val findAll: Route = (get & pathEndOrSingleSlash & parameterMap) { parameterMap =>
+   onComplete(recipeService.findAll(parameterMap)) {
      case Success(recipes) =>
        complete(Marshal(recipes).to[ResponseEntity].map{e => HttpResponse(entity = e)})
      case Failure(e) =>
