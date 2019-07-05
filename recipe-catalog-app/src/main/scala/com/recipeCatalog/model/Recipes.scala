@@ -77,10 +77,14 @@ object Author {
   val authorCodecProvider: CodecProvider = Macros.createCodecProviderIgnoreNone[Author]()
 }
 
+@ApiModel(description = "An ingredient object")
 case class Ingredient (
+  @(ApiModelProperty @field)(value = "Unique identifier for the ingredient")
   override val _id: String,
+  @(ApiModelProperty @field)(value = "Name of the ingredient")
   name: String,
-  proportion: String,
+  @(ApiModelProperty @field)(value = "Measure of quantity (format: value/unit)")
+  measure: String,
 ) extends Entity(_id)
 
 object Ingredient {
@@ -88,7 +92,7 @@ object Ingredient {
       override def apply(a: Ingredient): Json = Json.obj(
         "id" -> a._id.asJson,
         "name" -> a.name.asJson,
-        "proportion" -> a.proportion.asJson
+        "measure" -> a.measure.asJson
       )
     }
 
@@ -96,8 +100,8 @@ object Ingredient {
     override def apply(c: HCursor): Result[Ingredient] = for {
       id <- c.downField("id").as[Option[String]]
       name <- c.downField("name").as[Option[String]]
-      proportion <- c.downField("proportion").as[Option[String]]
-    } yield Ingredient(id.getOrElse(""), name.getOrElse(""), proportion.getOrElse(""))
+      measure <- c.downField("measure").as[Option[String]]
+    } yield Ingredient(id.getOrElse(""), name.getOrElse(""), measure.getOrElse(""))
   }
   val ingredientCodecProvider: CodecProvider = Macros.createCodecProviderIgnoreNone[Ingredient]()
 }

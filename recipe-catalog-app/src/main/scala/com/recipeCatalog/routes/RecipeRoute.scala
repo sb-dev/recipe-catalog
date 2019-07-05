@@ -10,6 +10,8 @@ import com.recipeCatalog.common.model.FindByIdRequest
 import com.recipeCatalog.model.Recipe
 import com.recipeCatalog.service.RecipeService
 import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport._
+import io.swagger.annotations.{Api, ApiImplicitParam, ApiImplicitParams, ApiOperation}
+import javax.ws.rs.{DELETE, GET, PUT, Path}
 
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
@@ -21,8 +23,23 @@ import scala.util.{Failure, Success}
   * Delete /api/recipes/{id}
   */
 
+@Path("/api/recipes")
+@Api(value = "/api/recipes", produces = "application/json")
 class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, mat: Materializer) {
- private lazy val findAll: Route = (get & pathEndOrSingleSlash & parameterMap) { parameterMap =>
+  @GET
+  @Path("/")
+  @ApiOperation(
+    httpMethod = "GET",
+    response = classOf[Recipe],
+    responseContainer = "List",
+    value = "Returns a list of recipes"
+  )
+  @ApiImplicitParams(
+    Array(
+      new ApiImplicitParam(name="ingredientIds", value = "ingredients IDs to filter recipes on", required = false, dataType = "String", paramType = "query")
+    )
+  )
+ def findAll: Route = (get & pathEndOrSingleSlash & parameterMap) { parameterMap =>
    onComplete(recipeService.findAll(parameterMap)) {
      case Success(recipes) =>
        complete(Marshal(recipes).to[ResponseEntity].map{e => HttpResponse(entity = e)})
@@ -31,7 +48,19 @@ class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, m
    }
  }
 
- private lazy val findById: Route = (get & path(Segment).as(FindByIdRequest)) { request =>
+  @GET
+  @Path("/{recipeId}")
+  @ApiOperation(
+    httpMethod = "GET",
+    response = classOf[Recipe],
+    value = "Returns an recipe based on ID"
+  )
+  @ApiImplicitParams(
+    Array(
+      new ApiImplicitParam(name="recipeId", value = "recipe ID", required = true, dataType = "String", paramType = "path")
+    )
+  )
+ def findById: Route = (get & path(Segment).as(FindByIdRequest)) { request =>
    onComplete(recipeService.findOne(request.id)) {
      case Success(Some(recipe)) =>
        complete(Marshal(recipe).to[ResponseEntity].map{e => HttpResponse(entity = e)})
@@ -42,7 +71,19 @@ class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, m
    }
  }
 
- private lazy val update: Route = (put & path(Segment).as(FindByIdRequest) & entity(as[Recipe])) { (request, recipe) =>
+  @PUT
+  @Path("/")
+  @ApiOperation(
+    httpMethod = "PUT",
+    response = classOf[Void],
+    value = "Update recipe based on recipe ID"
+  )
+  @ApiImplicitParams(
+    Array(
+      new ApiImplicitParam(value = "recipe", required = true, dataTypeClass = classOf[Recipe], paramType = "body")
+    )
+  )
+ def update: Route = (put & path(Segment).as(FindByIdRequest) & entity(as[Recipe])) { (request, recipe) =>
    onComplete(recipeService.update(request.id, recipe)) {
      case Success(Some(recipe)) =>
        complete(handleCreated("recipe", recipe._id))
@@ -53,7 +94,19 @@ class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, m
    }
  }
 
- private lazy val remove: Route = (delete & path(Segment).as(FindByIdRequest)) { request =>
+  @DELETE
+  @Path("/{recipeId}")
+  @ApiOperation(
+    httpMethod = "DELETE",
+    response = classOf[Void],
+    value = "Deletes a recipe based on ID"
+  )
+  @ApiImplicitParams(
+    Array(
+      new ApiImplicitParam(value = "recipe ID", required = true, dataType = "String", paramType = "path")
+    )
+  )
+ def remove: Route = (delete & path(Segment).as(FindByIdRequest)) { request =>
    onComplete(recipeService.delete(request.id)) {
      case Success(result) =>
        if (result.wasAcknowledged())
