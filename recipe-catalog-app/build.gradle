@@ -1,4 +1,20 @@
+import com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer
+
 apply plugin: 'scala'
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+mainClassName = "com.recipeCatalog.Application"
+
+shadowJar {
+    baseName = project.name
+    version = ''
+    zip64 = true
+
+    transform(AppendingTransformer) {
+        resource = 'reference.conf'
+    }
+}
 
 ext.versions = [
         scala            : '2.12',
