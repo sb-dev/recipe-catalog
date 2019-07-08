@@ -22,7 +22,7 @@ object Application extends App {
   val loggedRoutes = DebuggingDirectives.logRequestResult("Client ReST", Logging.InfoLevel)(routes)
 
   Http().bindAndHandle(loggedRoutes, host, appPort).onComplete {
-    case Success(b) => log.info(s"Application is up and running at ${b.localAddress.getHostName}:${b.localAddress.getPort}")
+    case Success(b) => log.info(s"Connecting to ${config.getString("app.mongo.url")}");log.info(s"Application is up and running at ${b.localAddress.getHostName}:${b.localAddress.getPort}")
     case Failure(e) => log.error(s"could not start application: {}", e.getMessage)
   }
 }
