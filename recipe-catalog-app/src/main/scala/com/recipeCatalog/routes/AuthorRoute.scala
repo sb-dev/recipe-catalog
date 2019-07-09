@@ -93,7 +93,7 @@ class AuthorRoute(authorService: AuthorService)(implicit ec: ExecutionContext, m
   }
 
   @PUT
-  @Path("/")
+  @Path("/{authorId}")
   @ApiOperation(
     httpMethod = "PUT",
     response = classOf[Void],
