@@ -1,5 +1,14 @@
 version: '3'
 services:
+    recipe-catalog-app:
+        container_name: recipe-catalog-app
+        build: ./recipe-catalog-app
+        ports:
+            - "8080:8080"
+        environment:
+            - MONGODB_HOST=recipe-catalog-database
+        links:
+            - recipe-catalog-database
     recipe-catalog-database:
         container_name: recipe-catalog-database
         build: ./recipe-catalog-database
