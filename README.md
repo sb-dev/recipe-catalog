@@ -23,10 +23,44 @@ Collection of recipes
 ./gradlew clean recipe-catalog-app:run
 ```
 
-## Usage
+## Usage 
 
-### GET /api/v1/recipes
+### Authors
+
+**GET /api/authors**
+Retrieve all authors  
+
+**POST /api/authors**
+Create new author  
+
+**GET /api/authors/{id}**
+Retrieve author by ID  
+
+**PUT /api/authors/{id}**
+Update existing author  
+
+**DELETE /api/authors/{id}**
+Delete author  
+
+**GET /api/authors/{id}/recipes**
+Retrieve recipes by author  
+
+**POST /api/authors/{id}/recipes**
+Create new recipe 
+
+### Recipes
+
+**GET /api/v1/recipes**
+Retrieve all recipes  
+
+**GET /api/recipes/{id}**
 Retrieve all recipes
+
+**PUT /api/recipes/{id}**
+Update existing recipe
+
+**Delete /api/recipes/{id}**
+Delete recipe
 
 ## Build Docker Images
 
