@@ -4,7 +4,7 @@ import com.mongodb.client.result.DeleteResult
 import com.recipeCatalog.common.model.Entity
 import org.bson.codecs.configuration.CodecRegistry
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Filters.equal
+import org.mongodb.scala.model.Filters.{and, equal}
 import org.mongodb.scala.model.{InsertOneModel, WriteModel}
 import org.mongodb.scala.{MongoClient, MongoCollection, MongoDatabase}
 
@@ -37,8 +37,9 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
       .map(Option(_))
   }
 
-  def query(filter: Bson): Future[Seq[A]] = {
-    collection.find(filter)
+  def query(filters: Bson*): Future[Seq[A]] = {
+    val conditions: Bson = and(filters: _*)
+    collection.find(conditions)
       .collect[A]()
       .head()
   }

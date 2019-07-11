@@ -5,6 +5,7 @@ import akka.stream.ActorMaterializer
 import com.recipeCatalog.common.repository.{IdGenerator, Mongo}
 import com.recipeCatalog.model.Author.authorCodecProvider
 import com.recipeCatalog.model.Recipe.recipeCodecProvider
+import com.recipeCatalog.model.Ingredient.ingredientCodecProvider
 import com.recipeCatalog.repository.{AuthorRepository, RecipeRepository}
 import com.recipeCatalog.routes.{AuthorRoute, RecipeRoute}
 import com.recipeCatalog.service.{AuthorService, RecipeService}
@@ -24,7 +25,7 @@ trait Module {
 
   val config: Config = ConfigFactory.load()
   val codecRegistry: CodecRegistry = fromRegistries(
-    fromProviders(recipeCodecProvider, authorCodecProvider),
+    fromProviders(recipeCodecProvider, authorCodecProvider, ingredientCodecProvider),
     DEFAULT_CODEC_REGISTRY
   )
 

@@ -7,8 +7,11 @@ import com.recipeCatalog.repository.RecipeRepository
 import scala.concurrent.{ExecutionContext, Future}
 
 class RecipeService(recipeRepository: RecipeRepository)(implicit ec: ExecutionContext) {
-  def findAll(): Future[Seq[Recipe]] = {
-    recipeRepository.queryAll()
+  def findAll(queryParams: Map[String, String]): Future[Seq[Recipe]] = {
+    if (queryParams.isEmpty)
+      recipeRepository.queryAll()
+    else
+      recipeRepository.queryRecipes(queryParams)
   }
 
   def findOne(id: String): Future[Option[Recipe]] = {
