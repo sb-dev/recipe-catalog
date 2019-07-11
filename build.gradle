@@ -4,7 +4,8 @@ plugins {
 }
 
 project.task('start') {
-    dependsOn(":recipe-catalog:clean")
+    dependsOn(":recipe-catalog-app:clean")
+    dependsOn(":recipe-catalog-app:shadowJar")
 
     doLast {
         project.exec {

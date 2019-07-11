@@ -20,6 +20,9 @@ Collection of recipes
 ./gradlew clean recipe-catalog-app:shadowjar
 
 # Run the project
+./gradlew start
+
+# Run only recipe-catalog-app
 ./gradlew clean recipe-catalog-app:run
 ```
 
