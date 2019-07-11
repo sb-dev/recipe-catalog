@@ -7,10 +7,10 @@ import akka.http.scaladsl.server.Route
 import akka.stream.Materializer
 import com.recipeCatalog.common.http.Helpers._
 import com.recipeCatalog.common.model.FindByIdRequest
-import com.recipeCatalog.model.{Recipe}
+import com.recipeCatalog.model.Recipe
 import com.recipeCatalog.service.RecipeService
 import de.heikoseeberger.akkahttpcirce.ErrorAccumulatingCirceSupport._
-import io.swagger.annotations._
+import io.swagger.annotations.{Api, ApiImplicitParam, ApiImplicitParams, ApiOperation}
 import javax.ws.rs.{DELETE, GET, PUT, Path}
 
 import scala.concurrent.ExecutionContext
@@ -23,21 +23,24 @@ import scala.util.{Failure, Success}
   * Delete /api/recipes/{id}
   */
 
-
 @Path("/api/recipes")
 @Api(value = "/api/recipes", produces = "application/json")
 class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, mat: Materializer) {
-
   @GET
   @Path("/")
   @ApiOperation(
     httpMethod = "GET",
     response = classOf[Recipe],
     responseContainer = "List",
-    value = "Returns a list of all recipes"
+    value = "Returns a list of recipes"
   )
- def findAll: Route = (get & pathEndOrSingleSlash) {
-   onComplete(recipeService.findAll()) {
+  @ApiImplicitParams(
+    Array(
+      new ApiImplicitParam(name="ingredientIds", value = "ingredients IDs to filter recipes on", required = false, dataType = "String", paramType = "query")
+    )
+  )
+ def findAll: Route = (get & pathEndOrSingleSlash & parameterMap) { parameterMap =>
+   onComplete(recipeService.findAll(parameterMap)) {
      case Success(recipes) =>
        complete(Marshal(recipes).to[ResponseEntity].map{e => HttpResponse(entity = e)})
      case Failure(e) =>
@@ -46,15 +49,15 @@ class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, m
  }
 
   @GET
-  @Path("/{id}")
+  @Path("/{recipeId}")
   @ApiOperation(
     httpMethod = "GET",
     response = classOf[Recipe],
-    value = "Returns a recipe based on ID"
+    value = "Returns an recipe based on ID"
   )
   @ApiImplicitParams(
     Array(
-      new ApiImplicitParam(name="id", value = "recipe ID", required = true, dataType = "String", paramType = "path")
+      new ApiImplicitParam(name="recipeId", value = "recipe ID", required = true, dataType = "String", paramType = "path")
     )
   )
  def findById: Route = (get & path(Segment).as(FindByIdRequest)) { request =>
@@ -69,7 +72,7 @@ class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, m
  }
 
   @PUT
-  @Path("/{id}")
+  @Path("/")
   @ApiOperation(
     httpMethod = "PUT",
     response = classOf[Void],
@@ -92,7 +95,7 @@ class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, m
  }
 
   @DELETE
-  @Path("/{id}")
+  @Path("/{recipeId}")
   @ApiOperation(
     httpMethod = "DELETE",
     response = classOf[Void],
@@ -103,7 +106,7 @@ class RecipeRoute(recipeService: RecipeService)(implicit ec: ExecutionContext, m
       new ApiImplicitParam(value = "recipe ID", required = true, dataType = "String", paramType = "path")
     )
   )
-  def remove: Route = (delete & path(Segment).as(FindByIdRequest)) { request =>
+ def remove: Route = (delete & path(Segment).as(FindByIdRequest)) { request =>
    onComplete(recipeService.delete(request.id)) {
      case Success(result) =>
        if (result.wasAcknowledged())
