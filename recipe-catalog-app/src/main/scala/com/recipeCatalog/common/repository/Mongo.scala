@@ -5,7 +5,7 @@ import com.recipeCatalog.common.model.Entity
 import org.bson.codecs.configuration.CodecRegistry
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.{and, equal}
-import org.mongodb.scala.model.{InsertOneModel, WriteModel}
+import org.mongodb.scala.model.InsertOneModel
 import org.mongodb.scala.{MongoClient, MongoCollection, MongoDatabase}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -59,10 +59,7 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
   }
 
   def insert(a: List[A]) {
-    val writes: List[WriteModel[_ <: A]] = a.map(item => {
-      InsertOneModel(item)
-    })
-    collection.bulkWrite(writes)
+    collection.bulkWrite(a.map(InsertOneModel(_)))
   }
 
   def delete(id: String): Future[DeleteResult] = {

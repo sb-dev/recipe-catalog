@@ -12,8 +12,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class RecipeRepository(val mongo: Mongo, val idGenerator: IdGenerator)(implicit ec: ExecutionContext) extends MongoRepository[Recipe, String] {
   override def collectionName: String = "recipes"
 
-  private val recipeFieldMap: Map[String, String] = Map(
-    "ingredients" -> "ingredients:_id"
+  private val recipeFieldMap: Map[String, (String, String)] = Map(
+    "ingredients" -> ("ingredients", "_id")
   )
 
   override def insert(recipe: Recipe): Future[String] = {
@@ -28,7 +28,7 @@ class RecipeRepository(val mongo: Mongo, val idGenerator: IdGenerator)(implicit 
     val filters: Set[Bson] = for {
       field <- queryParams.keySet
       value <- queryParams.values
-    } yield elemMatch(recipeFieldMap(field).split(":")(0), Document(recipeFieldMap(field).split(":")(1) -> value))
+    } yield elemMatch(recipeFieldMap(field)_1, Document((recipeFieldMap(field)_2) -> value))
     super.query(filters.toList: _*)
   }
 

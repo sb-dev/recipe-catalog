@@ -1,6 +1,6 @@
 package com.recipeCatalog.common.http
 
-import akka.http.scaladsl.marshalling.{Marshal, ToResponseMarshallable}
+import akka.http.scaladsl.marshalling.Marshal
 import akka.http.scaladsl.model.headers.Location
 import akka.http.scaladsl.model.{HttpResponse, ResponseEntity, StatusCodes}
 import akka.stream.Materializer

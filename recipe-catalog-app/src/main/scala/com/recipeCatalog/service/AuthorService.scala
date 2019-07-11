@@ -28,7 +28,7 @@ class AuthorService(authorRepository: AuthorRepository, recipeRepository: Recipe
   }
 
   def saveRecipe(authorId: String, recipe: Recipe): Future[String]  = {
-    recipeRepository.insert(Recipe(recipe._id, recipe.title, authorId, recipe.publishDate, recipe.ingredients))
+    recipeRepository.insert(recipe.copy(authorId = authorId))
   }
 
   def delete(id: String): Future[DeleteResult] = {
