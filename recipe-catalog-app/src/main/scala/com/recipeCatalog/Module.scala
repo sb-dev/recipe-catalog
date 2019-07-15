@@ -1,29 +1,26 @@
 package com.recipeCatalog
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+import akka.http.scaladsl.server.Directives.{getFromResourceDirectory, _}
+import com.recipeCatalog.common.config.MongoConfig
 import com.recipeCatalog.common.repository.{IdGenerator, Mongo}
 import com.recipeCatalog.model.Author.authorCodecProvider
-import com.recipeCatalog.model.Recipe.recipeCodecProvider
 import com.recipeCatalog.model.Ingredient.ingredientCodecProvider
+import com.recipeCatalog.model.Recipe.recipeCodecProvider
 import com.recipeCatalog.repository.{AuthorRepository, RecipeRepository}
 import com.recipeCatalog.routes.{AuthorRoute, RecipeRoute}
 import com.recipeCatalog.service.{AuthorService, RecipeService}
-import com.typesafe.config.{Config, ConfigFactory}
+import com.recipeCatalog.swagger.SwaggerDocService
+import com.typesafe.config.Config
+import net.ceedubs.ficus.Ficus._
+import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import org.bson.codecs.configuration.CodecRegistries.{fromProviders, fromRegistries}
 import org.bson.codecs.configuration.CodecRegistry
 import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
 
-import scala.concurrent.ExecutionContextExecutor
-
-trait Module {
+trait Module extends Application {
   import com.softwaremill.macwire._
 
-  implicit val system = ActorSystem("recipe-catalog-app")
-  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
-
-  val config: Config = ConfigFactory.load()
+  val mongoConfig: MongoConfig = config.as[MongoConfig]("app.mongo")
   val codecRegistry: CodecRegistry = fromRegistries(
     fromProviders(recipeCodecProvider, authorCodecProvider, ingredientCodecProvider),
     DEFAULT_CODEC_REGISTRY
@@ -31,8 +28,8 @@ trait Module {
 
   object MongoFactory {
     def create(config: Config) = Mongo(
-      config.getString("app.mongo.database"),
-      config.getString("app.mongo.url"),
+      mongoConfig.database,
+      mongoConfig.url,
       codecRegistry
     )
   }
@@ -48,6 +45,5 @@ trait Module {
   lazy val authorService= wire[AuthorService]
   lazy val authorRoutes = wire[AuthorRoute]
 
+  lazy val swaggerRoutes = SwaggerDocService.routes ~ getFromResourceDirectory("swagger-ui")
 }
-
-object Module extends Module

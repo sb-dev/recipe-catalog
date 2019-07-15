@@ -38,7 +38,8 @@ dependencies {
             "joda-time:joda-time:$versions.jodaTime",
             "javax.ws.rs:javax.ws.rs-api:2.1.1",
             "com.github.swagger-akka-http:swagger-akka-http_$versions.scala:1.1.0",
-            "io.swagger:swagger-annotations:1.5.22"
+            "io.swagger:swagger-annotations:1.5.22",
+            "com.iheart:ficus_$versions.scala:1.4.6"
 
     testCompile "junit:junit:4.12",
                 "org.scalatest:scalatest_$versions.scala:3.0.5",
