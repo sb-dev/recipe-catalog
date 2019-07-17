@@ -4,7 +4,7 @@ import com.recipeCatalog.common.repository.{IdGenerator, Mongo, MongoRepository}
 import com.recipeCatalog.model.Recipe
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.conversions.Bson
-import org.mongodb.scala.model.Filters.{equal, elemMatch}
+import org.mongodb.scala.model.Filters.{and, elemMatch, equal}
 import org.mongodb.scala.model.Updates
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -24,12 +24,11 @@ class RecipeRepository(val mongo: Mongo, val idGenerator: IdGenerator)(implicit 
     super.query(equal("authorId", authorId))
   }
 
-  def queryRecipes(queryParams: Map[String, String]): Future[Seq[Recipe]] = {
-    val filters: Set[Bson] = for {
-      field <- queryParams.keySet
-      value <- queryParams.values
-    } yield elemMatch(recipeFieldMap(field)_1, Document((recipeFieldMap(field)_2) -> value))
-    super.query(filters.toList: _*)
+  def queryRecipes(queryParams: Set[(String, String)]): Future[Seq[Recipe]] = {
+    val filters: List[Bson] = queryParams.toList.map {
+      case (field, value) => buildFilter(field, value)
+    }
+    super.query(and(filters: _*))
   }
 
   def update(id:String, recipe: Recipe): Future[Option[Recipe]] = {
@@ -38,5 +37,14 @@ class RecipeRepository(val mongo: Mongo, val idGenerator: IdGenerator)(implicit 
     )
 
     super.update(id, toUpdate)
+  }
+
+  private def buildFilter(field: String, value: String): Bson = {
+    if (recipeFieldMap.contains(field)) {
+      val (nestedDocuments, filterField) = recipeFieldMap(field)
+      elemMatch(nestedDocuments, Document(filterField -> value))
+    } else {
+      equal(field, value)
+    }
   }
 }
