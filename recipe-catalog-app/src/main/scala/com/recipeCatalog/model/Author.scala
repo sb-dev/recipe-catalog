@@ -19,6 +19,10 @@ case class Author(
 ) extends Entity(_id)
 
 object Author {
+  def apply(line: Array[String]): Author = line match {
+    case Array(id: String, name: String) => new Author(id, name)
+  }
+
   implicit val encoder: Encoder[Author] = new Encoder[Author] {
     override def apply(a: Author): Json = Json.obj(
       "id" -> a._id.asJson,

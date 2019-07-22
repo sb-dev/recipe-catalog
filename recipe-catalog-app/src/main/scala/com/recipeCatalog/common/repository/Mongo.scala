@@ -3,9 +3,11 @@ package com.recipeCatalog.common.repository
 import com.mongodb.client.result.DeleteResult
 import com.recipeCatalog.common.model.Entity
 import org.bson.codecs.configuration.CodecRegistry
+import org.mongodb.scala.bson.BsonDocument
+import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.{and, equal}
-import org.mongodb.scala.model.InsertOneModel
+import org.mongodb.scala.model.{InsertOneModel, UpdateOneModel, UpdateOptions}
 import org.mongodb.scala.{MongoClient, MongoCollection, MongoDatabase}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -60,6 +62,18 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
 
   def insert(a: List[A]) {
     collection.bulkWrite(a.map(InsertOneModel(_)))
+  }
+
+  def upsert(a: List[(String, Bson)]): Unit = {
+    collection.bulkWrite(
+      for {
+        (id, updates) <- a
+      } yield UpdateOneModel(
+        new BsonDocument(),
+        updates,
+        UpdateOptions().upsert(true)
+      )
+    )
   }
 
   def delete(id: String): Future[DeleteResult] = {
