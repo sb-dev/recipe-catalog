@@ -3,7 +3,7 @@ package com.recipeCatalog.repository
 import com.recipeCatalog.RecipeCatalogApplication.log
 import com.recipeCatalog.common.repository.{IdGenerator, Mongo, MongoRepository}
 import com.recipeCatalog.model.Author
-import org.mongodb.scala.bson.conversions.Bson
+import org.mongodb.scala.BulkWriteResult
 import org.mongodb.scala.model.Updates
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -20,7 +20,7 @@ class AuthorRepository(val mongo: Mongo, val idGenerator: IdGenerator)(implicit 
     super.update(id, getUpdates(author))
   }
 
-  def upsertAuthors(authors: List[Author]) = {
+  def upsertAuthors(authors: List[Author]): Future[BulkWriteResult] = {
     super.upsert(
       authors.map((author) => {
         (author._id, getUpdates(author))
@@ -34,10 +34,17 @@ class AuthorRepository(val mongo: Mongo, val idGenerator: IdGenerator)(implicit 
         line <- lines if line.split(",")(0) != "Id"
       } yield Author(line.split(","))
 
-      upsertAuthors(authors.toList)
+      upsertAuthors(authors.toList) onComplete {
+        case Success(result) =>
+          if(result.wasAcknowledged()) println(s"Initial author data has been inserted/updated")
+        case Failure(e) => {
+          println(s"Unable to load initial author data: ${e.getMessage}")
+          e.printStackTrace()
+        }
+      }
     }
     case Failure(ex) => {
-      log.error(s"Unable to load initial data...")
+      log.error(s"Unable to load initial author data...")
       ex.printStackTrace()
     }
   }

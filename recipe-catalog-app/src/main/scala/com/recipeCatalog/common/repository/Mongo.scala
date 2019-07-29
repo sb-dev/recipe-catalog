@@ -3,12 +3,11 @@ package com.recipeCatalog.common.repository
 import com.mongodb.client.result.DeleteResult
 import com.recipeCatalog.common.model.Entity
 import org.bson.codecs.configuration.CodecRegistry
-import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.bson.collection.immutable.Document
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.{and, equal}
 import org.mongodb.scala.model.{InsertOneModel, UpdateOneModel, UpdateOptions}
-import org.mongodb.scala.{MongoClient, MongoCollection, MongoDatabase}
+import org.mongodb.scala.{BulkWriteResult, MongoClient, MongoCollection, MongoDatabase}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
@@ -64,16 +63,16 @@ abstract class MongoRepository[A <: Entity, IdType](implicit ec: ExecutionContex
     collection.bulkWrite(a.map(InsertOneModel(_)))
   }
 
-  def upsert(a: List[(String, Bson)]): Unit = {
+  def upsert(a: List[(String, Bson)]): Future[BulkWriteResult] = {
     collection.bulkWrite(
       for {
         (id, updates) <- a
       } yield UpdateOneModel(
-        new BsonDocument(),
+        Document("_id" -> id),
         updates,
         UpdateOptions().upsert(true)
       )
-    )
+    ).head()
   }
 
   def delete(id: String): Future[DeleteResult] = {
