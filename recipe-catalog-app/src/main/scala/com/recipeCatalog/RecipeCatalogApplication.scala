@@ -5,8 +5,7 @@ import com.recipeCatalog.common.repository.DataLoader
 
 object RecipeCatalogApplication extends Module {
 
-  val authorData = DataLoader.loadData("/data/authors.csv")
-  authorRepository.processData(authorData)
+  authorRepository.loadInitialData("/data/authors.csv")
 
   startApplication(recipeRoutes.routes ~ authorRoutes.routes ~ swaggerRoutes)
 }
