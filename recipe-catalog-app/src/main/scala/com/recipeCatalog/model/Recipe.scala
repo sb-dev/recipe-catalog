@@ -29,6 +29,10 @@ case class Recipe (
 object Recipe {
   private val formatter = DateTimeFormatter.ISO_DATE
 
+  def apply(line: Array[String]): Recipe = line match {
+    case Array(id: String, name: String, publishDate: String, authorId: String) => new Recipe(id, name, authorId, parseDate(publishDate), List[Ingredient]())
+  }
+
   implicit val encoder: Encoder[Recipe] = new Encoder[Recipe] {
     override def apply(a: Recipe): Json = Json.obj(
       "id" -> a._id.asJson,
@@ -46,8 +50,10 @@ object Recipe {
       publishDate <- c.downField("publishDate").as[Option[String]]
       authorId <- c.downField("authorId").as[Option[String]]
       ingredients <- c.downField("ingredients").as[Option[List[Ingredient]]]
-    } yield Recipe(id.getOrElse(""), title.getOrElse(""), authorId.getOrElse(""), LocalDate.parse(publishDate.get, formatter), ingredients.getOrElse(List()))
+    } yield Recipe(id.getOrElse(""), title.getOrElse(""), authorId.getOrElse(""), parseDate(publishDate.get), ingredients.getOrElse(List()))
   }
 
   val recipeCodecProvider: CodecProvider = Macros.createCodecProviderIgnoreNone[Recipe]()
+
+  def parseDate(date: String): LocalDate = LocalDate.parse(date, formatter)
 }

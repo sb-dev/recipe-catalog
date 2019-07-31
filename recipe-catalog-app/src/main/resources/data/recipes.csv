@@ -1,9 +1,2 @@
-ID, Name, Publish date, Author Id, Ingredient ID, Ingredient Name, Measure
-recipe-1, California scrambled eggs, 2019-07-11, author-3, ingredient-1, eggs, 3
--,-,-,-, ingredient-2, coconut oil, 1/tbsp
--,-,-,-, ingredient-3, red chilli, 0.5
--,-,-,-, ingredient-4, cherry tomatoes, 8/1
--,-,-,-, ingredient-5, spinach leaves, 2/handfuls
--,-,-,-, ingredient-6, feta, 50/g
--,-,-,-, ingredient-7, avocado, 0.5
--,-,-,-, ingredient-8, toasted mixed seed, 1/tbsp
+Id, Name, Publish date, Author Id
+recipe-1, California scrambled eggs, 2019-07-11, author-3

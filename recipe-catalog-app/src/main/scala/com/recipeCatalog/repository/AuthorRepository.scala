@@ -30,8 +30,8 @@ class AuthorRepository(val mongo: Mongo, val idGenerator: IdGenerator)(implicit 
   def loadInitialData(path: String) = {
     val authorData = DataLoader.loadData(path)
     for {
-      authorData <- processData(authorData)
-    } yield insertData(authorData)
+      authors <- processData(authorData)
+    } yield insertData(authors)
   }
 
   def processData(lines: Try[Iterator[String]]): Either[String, List[Author]] = lines match {

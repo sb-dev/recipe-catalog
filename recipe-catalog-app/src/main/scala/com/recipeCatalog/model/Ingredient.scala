@@ -21,6 +21,10 @@ case class Ingredient (
 ) extends Entity(_id)
 
 object Ingredient {
+  def apply(lines: Array[String]): (String, Ingredient) = {
+    case Array(recipeId: String, id: String, name: String, measure: String) => (recipeId, new Ingredient(id, name, measure))
+  }
+
   implicit val encoder: Encoder[Ingredient] = new Encoder[Ingredient] {
     override def apply(a: Ingredient): Json = Json.obj(
       "id" -> a._id.asJson,
